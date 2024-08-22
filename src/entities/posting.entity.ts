@@ -1,13 +1,6 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { PostingHashtag } from './posting-hashtag.entity';
+import { BaseModel } from './base-model.entity';
 
 export enum SocialNetworkType {
   FACEBOOK = 'facebook',
@@ -18,17 +11,11 @@ export enum SocialNetworkType {
 
 @Entity()
 @Unique(['type', 'contentId'])
-export class Posting {
-  @PrimaryGeneratedColumn('uuid')
-  postingId: string;
-
+export class Posting extends BaseModel {
   @Column({ type: 'varchar', length: 255 })
   contentId: string;
 
-  @Column({
-    type: 'enum',
-    enum: SocialNetworkType,
-  })
+  @Column({ type: 'enum', enum: SocialNetworkType })
   type: SocialNetworkType;
 
   @Column({ type: 'varchar', length: 255 })
@@ -48,12 +35,6 @@ export class Posting {
 
   @Column({ default: 0 })
   shareCount: number;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @OneToMany(() => PostingHashtag, (postingHashtag) => postingHashtag.posting)
   postingHashtags: PostingHashtag[];

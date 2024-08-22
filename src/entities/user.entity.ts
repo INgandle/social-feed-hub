@@ -1,17 +1,8 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { BaseModel } from './base-model.entity';
 
 @Entity()
-export class User {
-  // insert 이전에 uuid를 생성하여 넣어준다.
-  @PrimaryGeneratedColumn('uuid')
-  userId: number;
-
+export class User extends BaseModel {
   @Column({ type: 'varchar', length: 32, unique: true })
   accountName: string;
 
@@ -23,10 +14,4 @@ export class User {
 
   @Column({ type: 'varchar', length: 255 })
   password: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }
