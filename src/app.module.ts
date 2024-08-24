@@ -9,6 +9,7 @@ import { Posting } from './entities/posting.entity';
 import { Hashtag } from './entities/hashtag.entity';
 import { PostingHashtag } from './entities/posting-hashtag.entity';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { UsersModule } from './users/users.module';
     }),
     TypeOrmModule.forFeature([User, Posting, Hashtag, PostingHashtag]),
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

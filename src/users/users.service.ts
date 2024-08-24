@@ -15,6 +15,16 @@ export class UsersService {
   ) {}
 
   /**
+   * 이메일로 유저를 검색합니다.
+   * @param email 이메일
+   * @returns 검색된 유저 | null
+   */
+  async getOneByEmail(email: User['email']): Promise<User | null> {
+    const user = await this.userRepository.findOneBy({ email });
+    return user;
+  }
+
+  /**
    * accountName에 대한 유효성 검사
    * - 이미 존재하는 accountName인지 확인합니다.
    * @param accountName 계정 이름
