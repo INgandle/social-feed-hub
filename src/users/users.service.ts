@@ -116,24 +116,26 @@ export class UsersService {
    * 새로운 user를 생성합니다.
    * @param user CreateUserDto
    */
-  async create(user: CreateUserDto) {
-    if (!user.name || !user.email || !user.password || !user.accountName) {
+  async create(createUserDto: CreateUserDto) {
+    const { name, email, password, accountName } = createUserDto;
+
+    if (!name || !email || !password || !accountName) {
       throw new BadRequestException('name, email, password, and accountName are required');
     }
 
-    await this.validateEmail(user.email);
-    await this.validateAccountName(user.accountName);
-    this.validatePassword(user.password);
+    await this.validateEmail(email);
+    await this.validateAccountName(accountName);
+    this.validatePassword(password);
 
-    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await this.userRepository.insert({
-      accountName: user.accountName,
-      email: user.email,
+      accountName,
+      email,
       password: hashedPassword,
-      name: user.name,
+      name,
     });
 
-    await this.sendVerifyEmailCode(user.email);
+    await this.sendVerifyEmailCode(email);
   }
 }
