@@ -1,9 +1,11 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
+
+const CODE_VALIDITY_PERIOD = 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class UsersService {
@@ -84,6 +86,33 @@ export class UsersService {
   }
 
   /**
+   * 승인 코드를 생성, 저장하고 이메일로 전송합니다.
+   * @param email 이메일
+   */
+  async sendVerifyEmailCode(email: User['email']) {
+    const user = await this.userRepository.findOneBy({ email });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+      const randomIdx = Math.floor(Math.random() * characters.length);
+      code += characters[randomIdx];
+    }
+
+    const now = new Date();
+    await this.userRepository.update(
+      { id: user.id },
+      { verifyCode: code, codeExpiresAt: new Date(now.getTime() + CODE_VALIDITY_PERIOD), isEmailVerified: false },
+    );
+
+    // TODO: 이메일 전송 - 추후 추가
+  }
+
+  /**
    * 새로운 user를 생성합니다.
    * @param user CreateUserDto
    */
@@ -104,5 +133,7 @@ export class UsersService {
       password: hashedPassword,
       name: user.name,
     });
+
+    await this.sendVerifyEmailCode(user.email);
   }
 }
