@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -37,5 +37,11 @@ export class UsersController {
   @Post('/sign-in')
   async signIn(@Request() req: UserRequest): Promise<{ access_token: string }> {
     return this.authService.login(req.user);
+  }
+
+  @Patch('/verify-email')
+  @HttpCode(204)
+  async verifyEmail(@Request() req: UserRequest, @Body('code') code: string) {
+    await this.usersService.verifyEmailCode(code, req.user);
   }
 }

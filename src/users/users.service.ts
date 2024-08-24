@@ -1,9 +1,16 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserResponseDto } from './dto/user-response.dto';
 
 const CODE_VALIDITY_PERIOD = 24 * 60 * 60 * 1000;
 
@@ -135,6 +142,26 @@ export class UsersService {
     );
 
     // TODO: 이메일 전송 - 추후 추가
+  }
+
+  /**
+   * 인증코드가 유효한지 확인합니다.
+   * @param code 인증코드
+   * @param user 유저
+   */
+  async verifyEmailCode(code: string, userRequestDto: UserResponseDto): Promise<void> {
+    const user = await this.getOneByEmailOrFail(userRequestDto.email);
+
+    const now = new Date();
+    if (!user.codeExpiresAt || user.codeExpiresAt.getTime() < now.getTime()) {
+      throw new UnauthorizedException('Code expired');
+    }
+
+    if (code !== user.verifyCode) {
+      throw new UnauthorizedException('Invalid Code');
+    }
+
+    await this.userRepository.update({ id: user.id }, { isEmailVerified: true });
   }
 
   /**
