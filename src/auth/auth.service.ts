@@ -22,7 +22,7 @@ export class AuthService {
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (isValidPassword) {
-      const { password, verifyCode, codeExpiresAt, ...result } = user;
+      const { password, verifyCode, codeExpiresAt, createdAt, updatedAt, ...result } = user;
       return result;
     }
 

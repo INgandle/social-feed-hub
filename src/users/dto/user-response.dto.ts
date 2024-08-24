@@ -4,6 +4,4 @@ export class UserResponseDto {
   readonly email: string;
   readonly isEmailVerified?: boolean;
   readonly id: string;
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
 }
