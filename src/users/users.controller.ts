@@ -20,13 +20,16 @@ export class UsersController {
   @Public()
   @Post('/sign-up')
   @HttpCode(204)
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<void> {
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<{ access_token: string }> {
     await this.usersService.create({
       name: createUserDto.name,
       accountName: createUserDto.accountName,
       email: createUserDto.email,
       password: createUserDto.password,
     });
+    const user = await this.usersService.getOneByEmailOrFail(createUserDto.email);
+
+    return this.authService.login({ id: user.id, name: user.name, accountName: user.accountName, email: user.email });
   }
 
   @Public()
