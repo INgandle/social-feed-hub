@@ -6,6 +6,7 @@ import { PostingResponseDto } from './dto/posting-response.dto';
 export class PostingsController {
   constructor(private readonly postingsService: PostingsService) {}
 
+  // TODO: AuthGuard 적용
   @Get()
   async findAll(): Promise<PostingResponseDto[]> {
     return await this.postingsService.findAll();
