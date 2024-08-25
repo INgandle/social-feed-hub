@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
@@ -8,6 +6,7 @@ import { User } from './entities/user.entity';
 import { Posting } from './entities/posting.entity';
 import { Hashtag } from './entities/hashtag.entity';
 import { PostingHashtag } from './entities/posting-hashtag.entity';
+import { StatisticModule } from './statistic/statistic.module';
 
 @Module({
   imports: [
@@ -27,8 +26,7 @@ import { PostingHashtag } from './entities/posting-hashtag.entity';
       }),
     }),
     TypeOrmModule.forFeature([User, Posting, Hashtag, PostingHashtag]),
+    StatisticModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
