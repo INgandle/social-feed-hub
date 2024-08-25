@@ -15,7 +15,7 @@ export class StatisticsService {
    * @param query 통계 조회 쿼리
    * @param userName api 호출한 사용자 이름
    */
-  async getStatistics(query: StatisticQueryDto, userName: string) {
+  async getStatistics(query: StatisticQueryDto, userName: string): Promise<StatisticResponseDto> {
     const { hashtag, type, start, end } = query;
 
     if (hashtag === undefined || hashtag === '' || hashtag === null) {
