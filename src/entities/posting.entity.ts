@@ -6,7 +6,7 @@ export enum SocialNetworkType {
   FACEBOOK = 'facebook',
   TWITTER = 'twitter',
   INSTAGRAM = 'instagram',
-  YOUTUBE = 'youtube',
+  THREADS = 'threads',
 }
 
 @Entity()
