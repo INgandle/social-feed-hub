@@ -6,7 +6,7 @@ import { User } from './entities/user.entity';
 import { Posting } from './entities/posting.entity';
 import { Hashtag } from './entities/hashtag.entity';
 import { PostingHashtag } from './entities/posting-hashtag.entity';
-import { StatisticModule } from './statistics/statistics.module';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [
@@ -26,7 +26,7 @@ import { StatisticModule } from './statistics/statistics.module';
       }),
     }),
     TypeOrmModule.forFeature([User, Posting, Hashtag, PostingHashtag]),
-    StatisticModule,
+    StatisticsModule,
   ],
 })
 export class AppModule {}

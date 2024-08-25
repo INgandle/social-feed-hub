@@ -1,22 +1,25 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { StatisticQueryDto } from './dto/statistic-query.dto';
-import { StatisticResponseDto } from './dto/statistic-response.dto';
+import { StatisticResponseDto, StatisticResult } from './dto/statistic-response.dto';
 import { StatisticType, DATE_RANGE_CONFIGS } from './types/statistics.types';
+import { Posting } from '../entities/posting.entity';
+import { DataSource } from 'typeorm';
 
 @Injectable()
-export class StatisticService {
+export class StatisticsService {
+  // TODO : posting Service를 사용하여 데이터를 조회하도록 구현 변경
+  constructor(private readonly dataSource: DataSource) {}
   /**
    * 통계 조회 함수
    *
-   * @param statisticQueryDto
-   * @param userName
+   * @param query 통계 조회 쿼리
+   * @param userName api 호출한 사용자 이름
    */
-  getStatistic(statisticQueryDto: StatisticQueryDto, userName: string) {
-    let { hashtag, type, start, end, value } = statisticQueryDto;
+  async getStatistics(query: StatisticQueryDto, userName: string) {
+    const { hashtag, type, start, end } = query;
 
     if (hashtag === undefined || hashtag === '' || hashtag === null) {
-      // hashtag 미입력 시 userName으로 대체
-      hashtag = userName;
+      query.hashtag = userName; // hashtag 미입력 시 userName으로 대체
     }
 
     if (this.validateDate(start, end, type) === false) {
@@ -24,6 +27,8 @@ export class StatisticService {
     }
 
     // get data from database
+    const data = await this.getStatisticsData(query);
+    return this.formatStatisticsData(data, query);
   }
 
   /**
@@ -32,6 +37,8 @@ export class StatisticService {
    * @param end
    */
   private adjustDate(start: Date, end: Date): void {
+    //NOTE: local time (KST) 기준으로 실행되고 있으므로 논의가 필요.
+    // 대체안으로 setUTCHours()가 있음
     start.setHours(0, 0, 0, 0);
     end.setHours(23, 59, 59, 999);
   }
@@ -61,5 +68,51 @@ export class StatisticService {
     const maxRange = DATE_RANGE_CONFIGS[type].maxRange;
 
     return range <= maxRange;
+  }
+
+  /**
+   * 쿼리 조건에 따른 통계 데이터를 실제 database에서 조회
+   *
+   * @param query
+   * @returns
+   */
+  private getStatisticsData(query: StatisticQueryDto): Promise<StatisticResult[]> {
+    const { type, value, start, end, hashtag } = query;
+
+    // type이 'date'일 경우, 날짜 포맷을 %Y-%m-%d로, 'hour'일 경우 %Y-%m-%d %H로 format 설정
+    const dateFormat = type === StatisticType.DATE ? '"%Y-%m-%d"' : '"%Y-%m-%d %H"';
+
+    return this.dataSource
+      .getRepository(Posting)
+      .createQueryBuilder('posting')
+      .select(value === 'count' ? 'COUNT(posting.id)' : `SUM(posting.${value})`, 'value')
+      .addSelect(`DATE_FORMAT(posting.createdAt, ${dateFormat})`, 'date')
+      .innerJoin('posting.postingHashtags', 'postingHashtag')
+      .innerJoin('postingHashtag.hashtag', 'hashtag')
+      .where('hashtag.name = :hashtag', { hashtag })
+      .andWhere('posting.createdAt >= :start', { start })
+      .andWhere('posting.createdAt <= :end', { end })
+      .groupBy('date')
+      .orderBy('date', 'ASC')
+      .getRawMany();
+  }
+
+  /**
+   * 통계 데이터를 response dto로 변환
+   *
+   * @param data
+   * @param query
+   * @returns
+   */
+  private formatStatisticsData(data: StatisticResult[], query: StatisticQueryDto): StatisticResponseDto {
+    return {
+      hashtag: query.hashtag,
+      type: query.type,
+      start: query.start,
+      end: query.end,
+      value: query.value,
+      statistics: data,
+      total: data.length,
+    };
   }
 }

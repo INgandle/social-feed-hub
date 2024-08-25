@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { StatisticController } from './statistics.controller';
-import { StatisticService } from './statistics.service';
+import { StatisticsController as StatisticsController } from './statistics.controller';
+import { StatisticsService } from './statistics.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Posting } from '../entities/posting.entity';
 
 @Module({
-  controllers: [StatisticController],
-  providers: [StatisticService],
+  imports: [TypeOrmModule.forFeature([Posting])],
+  controllers: [StatisticsController],
+  providers: [StatisticsService],
 })
-export class StatisticModule {}
+export class StatisticsModule {}

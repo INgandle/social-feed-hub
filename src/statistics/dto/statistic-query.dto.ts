@@ -2,7 +2,7 @@
  * GET /statistic 에서 쿼리 파라미터로 받을 DTO
  */
 import { Type } from 'class-transformer';
-import { IsEnum, IsDate, IsString, IsOptional } from 'class-validator';
+import { IsEnum, IsDate, IsString, IsOptional, Length } from 'class-validator';
 
 import { StatisticType, StatisticValue, SEVEN_DAYS } from '../types/statistics.types';
 
@@ -13,7 +13,8 @@ export class StatisticQueryDto {
    */
   @IsOptional()
   @IsString()
-  hashtag?: string;
+  @Length(1, 255)
+  hashtag: string;
 
   /**
    * 통계 타입 (일별, 시간별)

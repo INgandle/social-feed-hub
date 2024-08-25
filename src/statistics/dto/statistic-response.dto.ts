@@ -1,6 +1,6 @@
 import { StatisticType, StatisticValue } from '../types/statistics.types';
 
-type StatisticResult = {
+export type StatisticResult = {
   date: Date;
   value: number;
 };
@@ -36,4 +36,9 @@ export class StatisticResponseDto {
    * 통계 결과
    */
   statistics: StatisticResult[];
+
+  /**
+   * 통계 결과 갯수
+   */
+  total: number;
 }
