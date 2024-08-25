@@ -6,7 +6,7 @@ import { User } from './entities/user.entity';
 import { Posting } from './entities/posting.entity';
 import { Hashtag } from './entities/hashtag.entity';
 import { PostingHashtag } from './entities/posting-hashtag.entity';
-import { StatisticModule } from './statistic/statistic.module';
+import { StatisticModule } from './statistics/statistics.module';
 
 @Module({
   imports: [

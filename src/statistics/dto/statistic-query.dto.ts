@@ -4,19 +4,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsDate, IsString, IsOptional } from 'class-validator';
 
-const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
-
-export enum StatisticType {
-  DATE = 'date',
-  HOUR = 'hour',
-}
-
-export enum StatisticValue {
-  COUNT = 'count',
-  VIEW_COUNT = 'view_count',
-  LIKE_COUNT = 'like_count',
-  SHARE_COUNT = 'share_count',
-}
+import { StatisticType, StatisticValue, SEVEN_DAYS } from '../types/statistics.types';
 
 export class StatisticQueryDto {
   /**
@@ -41,7 +29,7 @@ export class StatisticQueryDto {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  start?: Date = new Date(new Date().getTime() - SEVEN_DAYS); // request 시점으로부터 7일 전
+  start: Date = new Date(new Date().getTime() - SEVEN_DAYS); // request 시점으로부터 7일 전
 
   /**
    * 통계 조회 종료일
@@ -50,7 +38,7 @@ export class StatisticQueryDto {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  end?: Date = new Date();
+  end: Date = new Date();
 
   /**
    * 조회할 통계 값 (게시물 수, 조회수, 좋아요 수, 공유 수)
@@ -58,5 +46,5 @@ export class StatisticQueryDto {
    */
   @IsOptional()
   @IsEnum(StatisticValue)
-  value?: StatisticValue = StatisticValue.COUNT;
+  value: StatisticValue = StatisticValue.COUNT;
 }
