@@ -54,14 +54,14 @@ export class StatisticsService {
    */
   private validateDate(start: Date, end: Date, type: StatisticType): boolean {
     const now = new Date();
-    // type에 따른 date validation
-    if (type === StatisticType.DATE) {
-      this.adjustDate(start, end);
-    }
-
     // 현 시간보다 이후의 시간이거나, start가 end보다 클 경우 false 반환
     if (start > end || end > now) {
       return false;
+    }
+
+    // type에 따른 date validation을 위해 adjustDate 함수 호출
+    if (type === StatisticType.DATE) {
+      this.adjustDate(start, end);
     }
 
     const range = end.getTime() - start.getTime();
