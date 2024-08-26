@@ -1,7 +1,18 @@
+import { IsBoolean, IsString } from 'class-validator';
+
 export class UserResponseDto {
-  readonly name: string;
-  readonly accountName: string;
-  readonly email: string;
-  readonly isEmailVerified?: boolean;
+  @IsString()
   readonly id: string;
+
+  @IsString()
+  readonly name: string;
+
+  @IsString()
+  readonly accountName: string;
+
+  @IsString()
+  readonly email: string;
+
+  @IsBoolean()
+  readonly isEmailVerified?: boolean;
 }
