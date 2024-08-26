@@ -10,9 +10,8 @@ import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserResponseDto } from './dto/user-response.dto';
-
-const CODE_VALIDITY_PERIOD = 24 * 60 * 60 * 1000;
+import { CODE_VALIDITY_PERIOD, SALT_OR_ROUNDS } from './users.constants';
+import { UserRequestDto } from './dto/user-request.dto';
 
 @Injectable()
 export class UsersService {
@@ -40,7 +39,7 @@ export class UsersService {
     const user = await this.userRepository.findOneBy({ email });
 
     if (user === null) {
-      throw new NotFoundException('user not found');
+      throw new NotFoundException('User not found');
     }
 
     return user;
@@ -53,7 +52,7 @@ export class UsersService {
    */
   async validateAccountName(accountName: User['accountName']) {
     if (!accountName) {
-      throw new BadRequestException('Email is required');
+      throw new BadRequestException('AccountName is required');
     }
 
     const existingAccountName = await this.userRepository.findOneBy({
@@ -149,7 +148,7 @@ export class UsersService {
    * @param code 인증코드
    * @param user 유저
    */
-  async verifyEmailCode(code: string, userRequestDto: UserResponseDto): Promise<void> {
+  async verifyEmailCode(code: string, userRequestDto: UserRequestDto): Promise<void> {
     const user = await this.getOneByEmailOrFail(userRequestDto.email);
 
     const now = new Date();
@@ -179,7 +178,7 @@ export class UsersService {
     await this.validateAccountName(accountName);
     this.validatePassword(password);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, SALT_OR_ROUNDS);
 
     await this.userRepository.insert({
       accountName,

@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -19,7 +19,7 @@ export class UsersController {
 
   @Public()
   @Post('/sign-up')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async createUser(@Body() createUserDto: CreateUserDto): Promise<{ access_token: string }> {
     await this.usersService.create({
       name: createUserDto.name,
@@ -40,7 +40,7 @@ export class UsersController {
   }
 
   @Patch('/verify-email')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async verifyEmail(@Request() req: UserRequest, @Body('code') code: string) {
     await this.usersService.verifyEmailCode(code, req.user);
   }
