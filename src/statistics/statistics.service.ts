@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { StatisticQueryDto } from './dto/statistic-query.dto';
 import { StatisticResponseDto, StatisticResult } from './dto/statistic-response.dto';
-import { StatisticType, DATE_RANGE_CONFIGS, StatisticValue } from './types/statistics.constants';
+import { StatisticType, DATE_RANGE_CONFIGS, StatisticValue, SEVEN_DAYS } from './types/statistics.constants';
 import { Posting } from '../entities/posting.entity';
 import { DataSource } from 'typeorm';
 
@@ -16,19 +16,33 @@ export class StatisticsService {
    * @returns 통계 response dto 객체
    */
   async getStatistics(query: StatisticQueryDto, userName: string): Promise<StatisticResponseDto> {
-    const { hashtag, type, start, end } = query;
-
-    if (hashtag === undefined || hashtag === '' || hashtag === null) {
-      query.hashtag = userName; // hashtag 미입력 시 userName으로 대체
+    // 쿼리 파라미터의 기본값 설정
+    const defaultedQuery = this.setDefaultValues(query, userName);
+    if (this.validateDate(defaultedQuery.start, defaultedQuery.end, defaultedQuery.type) === false) {
+      throw new BadRequestException(`Invalid date range for type ${defaultedQuery.type}.`);
     }
 
-    if (this.validateDate(start, end, type) === false) {
-      throw new BadRequestException(`Invalid date range for type ${type}.`);
-    }
+    // 통계 데이터 조회
+    const data = await this.getStatisticsData(defaultedQuery);
+    return this.formatStatisticsData(data, defaultedQuery);
+  }
 
-    // get data from database
-    const data = await this.getStatisticsData(query);
-    return this.formatStatisticsData(data, query);
+  /**
+   * 통계 조회 쿼리 파라미터의 기본값 설정
+   * Required<StatisticQueryDto> 타입을 이용해서 타입 안정성 보장
+   *
+   * @param query request 쿼리 파라미터
+   * @returns 기본값이 설정된 쿼리 파라미터
+   */
+  private setDefaultValues(query: StatisticQueryDto, userName: string): Required<StatisticQueryDto> {
+    const defaultedQuery: Required<StatisticQueryDto> = {
+      hashtag: query.hashtag || userName,
+      type: query.type || StatisticType.DATE,
+      start: query.start || new Date(new Date().getTime() - SEVEN_DAYS),
+      end: query.end || new Date(),
+      value: query.value || StatisticValue.COUNT,
+    };
+    return defaultedQuery;
   }
 
   /**
@@ -107,7 +121,7 @@ export class StatisticsService {
    * @param query 통계 조회 쿼리
    * @returns 통계 response dto 객체
    */
-  private formatStatisticsData(data: StatisticResult[], query: StatisticQueryDto): StatisticResponseDto {
+  private formatStatisticsData(data: StatisticResult[], query: Required<StatisticQueryDto>): StatisticResponseDto {
     return {
       hashtag: query.hashtag,
       type: query.type,

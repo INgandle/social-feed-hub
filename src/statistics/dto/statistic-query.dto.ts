@@ -5,6 +5,7 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsDate, IsString, IsOptional, Length } from 'class-validator';
 
 import { StatisticType, StatisticValue, SEVEN_DAYS } from '../types/statistics.constants';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class StatisticQueryDto {
   /**
@@ -14,14 +15,14 @@ export class StatisticQueryDto {
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  hashtag: string;
+  hashtag?: string;
 
   /**
    * 통계 타입 (일별, 시간별)
    * @example 'date'
    */
   @IsEnum(StatisticType)
-  type: StatisticType = StatisticType.DATE;
+  type: StatisticType;
 
   /**
    * 통계 조회 시작일
@@ -30,7 +31,7 @@ export class StatisticQueryDto {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  start: Date = new Date(new Date().getTime() - SEVEN_DAYS); // request 시점으로부터 7일 전
+  start?: Date;
 
   /**
    * 통계 조회 종료일
@@ -39,7 +40,7 @@ export class StatisticQueryDto {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  end: Date = new Date();
+  end?: Date;
 
   /**
    * 조회할 통계 값 (게시물 수, 조회수, 좋아요 수, 공유 수)
@@ -47,5 +48,5 @@ export class StatisticQueryDto {
    */
   @IsOptional()
   @IsEnum(StatisticValue)
-  value: StatisticValue = StatisticValue.COUNT;
+  value?: StatisticValue;
 }
