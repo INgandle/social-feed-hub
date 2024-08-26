@@ -19,7 +19,6 @@ export class UsersController {
 
   @Public()
   @Post('/sign-up')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async createUser(@Body() createUserDto: CreateUserDto): Promise<{ access_token: string }> {
     await this.usersService.create({
       name: createUserDto.name,
