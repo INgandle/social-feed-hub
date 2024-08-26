@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { StatisticQueryDto } from './dto/statistic-query.dto';
 import { StatisticResponseDto, StatisticResult } from './dto/statistic-response.dto';
-import { StatisticType, DATE_RANGE_CONFIGS } from './types/statistics.types';
+import { StatisticType, DATE_RANGE_CONFIGS } from './types/statistics.constants';
 import { Posting } from '../entities/posting.entity';
 import { DataSource } from 'typeorm';
 

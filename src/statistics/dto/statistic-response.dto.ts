@@ -1,4 +1,4 @@
-import { StatisticType, StatisticValue } from '../types/statistics.types';
+import { StatisticType, StatisticValue } from '../types/statistics.constants';
 
 export type StatisticResult = {
   date: Date;

@@ -4,7 +4,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsDate, IsString, IsOptional, Length } from 'class-validator';
 
-import { StatisticType, StatisticValue, SEVEN_DAYS } from '../types/statistics.types';
+import { StatisticType, StatisticValue, SEVEN_DAYS } from '../types/statistics.constants';
 
 export class StatisticQueryDto {
   /**
