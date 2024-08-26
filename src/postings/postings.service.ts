@@ -17,12 +17,12 @@ export class PostingsService {
 
     //게시글이 존재하지 않는 경우
     if (posting === null) {
-      throw new NotFoundException('존재하지 않는 게시글입니다.');
+      throw new NotFoundException('The post does not exist.');
     }
 
     //좋아요 수만 1 증가
     const newLikeCount = posting.likeCount + 1;
-    await this.postingRepository.update(id, { likeCount: newLikeCount });
+    this.postingRepository.update(id, { likeCount: newLikeCount });
   }
 
   /**
@@ -35,11 +35,11 @@ export class PostingsService {
 
     //게시글이 존재하지 않는 경우
     if (posting === null) {
-      throw new NotFoundException('존재하지 않는 게시글입니다.');
+      throw new NotFoundException('The post does not exist.');
     }
 
     //공유 수만 1 증가
     const newShareCount = posting.shareCount + 1;
-    await this.postingRepository.update(id, { shareCount: newShareCount });
+    this.postingRepository.update(id, { shareCount: newShareCount });
   }
 }
