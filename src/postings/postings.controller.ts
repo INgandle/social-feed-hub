@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query, Request } from '@nestjs/common';
 import { PostingsService } from './postings.service';
 import { PostingResponseDto } from './dto/posting-response.dto';
+import { PostingQueryDto } from './dto/posting-query.dto';
 
 @Controller('postings')
 export class PostingsController {
@@ -8,8 +9,10 @@ export class PostingsController {
 
   // TODO: AuthGuard 적용
   @Get()
-  async findAll(): Promise<PostingResponseDto[]> {
-    return await this.postingsService.findAll();
+  async findAll(@Request() req: any, @Query() queries: PostingQueryDto): Promise<PostingResponseDto[]> {
+    // TODO: any 해결
+    const hashtag = queries.hashtag || req.user.accountName;
+    return await this.postingsService.findAll(hashtag, queries);
   }
 
   // TODO: AuthGuard 적용
