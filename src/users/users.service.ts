@@ -39,7 +39,7 @@ export class UsersService {
   async getOneByEmailOrFail(email: User['email']): Promise<User> {
     const user = await this.userRepository.findOneBy({ email });
 
-    if (!user) {
+    if (user === null) {
       throw new NotFoundException('user not found');
     }
 
@@ -60,7 +60,7 @@ export class UsersService {
       accountName,
     });
 
-    if (existingAccountName) {
+    if (existingAccountName !== null) {
       throw new ConflictException('AccountName already exists');
     }
   }
@@ -88,7 +88,7 @@ export class UsersService {
       email,
     });
 
-    if (existingEmail) {
+    if (existingEmail !== null) {
       throw new ConflictException('Email already exists');
     }
   }
@@ -124,7 +124,7 @@ export class UsersService {
   async sendVerifyEmailCode(email: User['email']) {
     const user = await this.userRepository.findOneBy({ email });
 
-    if (!user) {
+    if (user === null) {
       throw new NotFoundException('User not found');
     }
 
