@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpException, HttpStatus, Param, Patch } from '@nestjs/common';
+import { Controller, HttpCode, Param, Patch } from '@nestjs/common';
 import { PostingsService } from './postings.service';
 
 @Controller('postings')
