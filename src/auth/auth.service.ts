@@ -22,8 +22,13 @@ export class AuthService {
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (isValidPassword) {
-      const { password, verifyCode, codeExpiresAt, createdAt, updatedAt, ...result } = user;
-      return result;
+      return {
+        id: user.id,
+        name: user.name,
+        accountName: user.accountName,
+        email: user.email,
+        isEmailVerified: user.isEmailVerified,
+      };
     }
 
     return null;
