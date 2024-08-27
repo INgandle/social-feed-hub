@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -17,6 +17,10 @@ export class PostingsService {
    */
   async findAll(hashtag: string, queries: PostingQueryDto): Promise<PostingResponseDto[]> {
     const { type, orderBy, sortOrder, searchBy, search, pageCount, page } = queries;
+    if (isNaN(pageCount) || isNaN(page)) {
+      throw new BadRequestException();
+    }
+
     const queryBuilder = this.postingRepository.createQueryBuilder('posting');
 
     // 1건의 hashtag와 정확히 일치하는 값 검색

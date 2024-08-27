@@ -1,4 +1,5 @@
 import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { SocialNetworkType } from 'src/entities/posting.entity';
 
 enum SortOrder {
@@ -43,8 +44,10 @@ export class PostingQueryDto {
   readonly search?: string;
 
   @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value))
   readonly pageCount: number = 10;
 
   @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value))
   readonly page: number = 0;
 }
