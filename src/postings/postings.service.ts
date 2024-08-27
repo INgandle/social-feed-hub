@@ -61,14 +61,12 @@ export class PostingsService {
    * @returns id에 해당하는 게시물
    */
   async findOne(id: string): Promise<PostingResponseDto> {
-    const posting = await this.postingRepository
-      .createQueryBuilder('posting')
-      .leftJoinAndSelect('posting.postingHashtags', 'postingHashtag')
-      .leftJoinAndSelect('postingHashtag.hashtag', 'hashtag')
-      .where('posting.id = :id', { id })
-      .getOne();
+    const posting = await this.postingRepository.findOne({
+      where: { id },
+      relations: ['postingHashtags', 'postingHashtags.hashtag'],
+    });
 
-    if (!posting) {
+    if (posting === null) {
       throw new NotFoundException('posting not found');
     }
     this.postingRepository.update(id, { viewCount: posting.viewCount + 1 });
