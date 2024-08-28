@@ -14,4 +14,13 @@ export class User extends BaseModel {
 
   @Column({ type: 'varchar', length: 255 })
   password: string;
+
+  @Column({ type: 'varchar', length: 6, nullable: true })
+  verifyCode?: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  codeExpiresAt?: Date;
+
+  @Column({ type: 'boolean', nullable: true })
+  isEmailVerified?: boolean;
 }
