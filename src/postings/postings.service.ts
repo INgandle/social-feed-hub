@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -16,10 +16,6 @@ export class PostingsService {
    * @returns 게시물 목록. 없는 경우 빈 배열
    */
   async findAll(hashtag: string, queries: PostingQueryDto): Promise<PostingResponseDto[]> {
-    if (isNaN(queries.pageCount) || isNaN(queries.page)) {
-      throw new BadRequestException();
-    }
-
     const rawPostings = await this.getRawPostings(hashtag, queries);
 
     // hashtag depth 정리 & content 글자 수 제한 적용해 반환
