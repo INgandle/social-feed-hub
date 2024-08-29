@@ -13,7 +13,6 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -38,6 +37,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     StatisticsModule,
     UsersModule,
     AuthModule,
+    PostingsModule,
   ],
   providers: [
     {
