@@ -6,10 +6,10 @@ import { User } from './entities/user.entity';
 import { Posting } from './entities/posting.entity';
 import { Hashtag } from './entities/hashtag.entity';
 import { PostingHashtag } from './entities/posting-hashtag.entity';
+import { PostingsModule } from './postings/postings.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { PostingsModule } from './postings/postings.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
@@ -33,6 +33,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
       }),
     }),
     TypeOrmModule.forFeature([User, Posting, Hashtag, PostingHashtag]),
+    PostingsModule,
     StatisticsModule,
     UsersModule,
     AuthModule,

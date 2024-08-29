@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-
 import { Posting } from 'src/entities/posting.entity';
+import { Repository } from 'typeorm';
 import { PostingResponseDto } from './dto/posting-response.dto';
 import { PostingQueryDto } from './dto/posting-query.dto';
 
@@ -84,7 +83,7 @@ export class PostingsService {
 
   // 조인으로 인한 hashtag의 depth를 정리한 새 객체를 반환합니다.
   private getPostingObjWithHashtags(postingObj: Posting): PostingResponseDto {
-const hashtags: string[] = postingObj.postingHashtags.map(postingHashtag) => postingHashtag.hashtag.name);
+    const hashtags: string[] = postingObj.postingHashtags.map((postingHashtag) => postingHashtag.hashtag.name);
 
     return {
       id: postingObj.id,
@@ -100,5 +99,41 @@ const hashtags: string[] = postingObj.postingHashtags.map(postingHashtag) => pos
       createdAt: postingObj.createdAt,
       updatedAt: postingObj.updatedAt,
     };
+  }
+
+  /**
+   * 게시글의 좋아요 수(like_count)를 1 증가시킵니다.
+   * @param id 게시글의 고유 ID (uuid)
+   * @returns void
+   */
+  async increaseLikeCount(id: string): Promise<void> {
+    const posting = await this.postingRepository.findOneBy({ id });
+
+    //게시글이 존재하지 않는 경우
+    if (posting === null) {
+      throw new NotFoundException('The post does not exist.');
+    }
+
+    //좋아요 수만 1 증가
+    const newLikeCount = posting.likeCount + 1;
+    this.postingRepository.update(id, { likeCount: newLikeCount });
+  }
+
+  /**
+   * 게시글 공유하기(share_count) 수를 1 증가시킵니다.
+   * @param id 게시글의 고유 ID (uuid)
+   * @returns void
+   */
+  async increaseShareCount(id: string): Promise<void> {
+    const posting = await this.postingRepository.findOneBy({ id });
+
+    //게시글이 존재하지 않는 경우
+    if (posting === null) {
+      throw new NotFoundException('The post does not exist.');
+    }
+
+    //공유 수만 1 증가
+    const newShareCount = posting.shareCount + 1;
+    this.postingRepository.update(id, { shareCount: newShareCount });
   }
 }
