@@ -9,6 +9,7 @@ import { PostingHashtag } from './entities/posting-hashtag.entity';
 import { StatisticsModule } from './statistics/statistics.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { PostingsModule } from './postings/postings.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
@@ -35,6 +36,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     StatisticsModule,
     UsersModule,
     AuthModule,
+    PostingsModule,
   ],
   providers: [
     {
