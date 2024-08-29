@@ -84,12 +84,7 @@ export class PostingsService {
 
   // 조인으로 인한 hashtag의 depth를 정리한 새 객체를 반환합니다.
   private getPostingObjWithHashtags(postingObj: Posting): PostingResponseDto {
-    const hashtags: string[] = [];
-    if (postingObj.postingHashtags.length) {
-      postingObj.postingHashtags.forEach((v) => {
-        hashtags.push(v.hashtag.name);
-      });
-    }
+const hashtags: string[] = postingObj.postingHashtags.map(postingHashtag) => postingHashtag.hashtag.name);
 
     return {
       id: postingObj.id,
